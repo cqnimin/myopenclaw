@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { formatDocsLink } from "../../terminal/links.js";
 import { theme } from "../../terminal/theme.js";
 import { formatHelpExamples } from "../help-format.js";
+import { registerNodesAgentRoutingCommands } from "./register.agent-routing.js";
 import { registerNodesCameraCommands } from "./register.camera.js";
 import { registerNodesCanvasCommands } from "./register.canvas.js";
 import { registerNodesInvokeCommands } from "./register.invoke.js";
@@ -32,6 +33,7 @@ export function registerNodesCli(program: Command) {
 
   registerNodesStatusCommands(nodes);
   registerNodesPairingCommands(nodes);
+  registerNodesAgentRoutingCommands(nodes);
   registerNodesInvokeCommands(nodes);
   registerNodesNotifyCommand(nodes);
   registerNodesPushCommand(nodes);

@@ -1,10 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { formatErrorMessage } from "../infra/errors.js";
 import type { PromptImageOrderEntry } from "../media/prompt-image-order.js";
-import {
-  normalizeLowercaseStringOrEmpty,
-  normalizeOptionalString,
-} from "../shared/string-coerce.js";
+import { getNodeAgentId } from "../infra/node-agent-routing.js";
 import type { NodeEvent, NodeEventContext } from "./server-node-events-types.js";
 import {
   agentCommandFromIngress,
@@ -33,6 +30,14 @@ import {
   scopedHeartbeatWakeOptions,
   updateSessionStore,
 } from "./server-node-events.runtime.js";
+
+async function applyNodeAgentRouting(nodeId: string, sessionKey: string): Promise<string> {
+  if (sessionKey.startsWith("agent:")) {
+    return sessionKey;
+  }
+  const agentId = await getNodeAgentId(nodeId);
+  return agentId ? `agent:${agentId}:${sessionKey}` : sessionKey;
+}
 
 const MAX_EXEC_EVENT_OUTPUT_CHARS = 180;
 const MAX_NOTIFICATION_EVENT_TEXT_CHARS = 120;
@@ -280,7 +285,8 @@ export const handleNodeEvent = async (ctx: NodeEventContext, nodeId: string, evt
       const sessionKeyRaw = normalizeOptionalString(obj.sessionKey) ?? "";
       const cfg = loadConfig();
       const rawMainKey = normalizeMainKey(cfg.session?.mainKey);
-      const sessionKey = sessionKeyRaw.length > 0 ? sessionKeyRaw : rawMainKey;
+      const sessionKeyBase = sessionKeyRaw.length > 0 ? sessionKeyRaw : rawMainKey;
+      const sessionKey = await applyNodeAgentRouting(nodeId, sessionKeyBase);
       const { storePath, entry, canonicalKey } = loadSessionEntry(sessionKey);
       const now = Date.now();
       const fingerprint = resolveVoiceTranscriptFingerprint(obj, text);
@@ -431,6 +437,11 @@ export const handleNodeEvent = async (ctx: NodeEventContext, nodeId: string, evt
         normalizeOptionalString(link?.receiptText) ||
         "Just received your iOS share + request, working on it.";
 
+      const sessionKeyRaw = (link?.sessionKey ?? "").trim();
+      const sessionKeyBase = sessionKeyRaw.length > 0 ? sessionKeyRaw : `node-${nodeId}`;
+      const sessionKey = await applyNodeAgentRouting(nodeId, sessionKeyBase);
+      const cfg = loadConfig();
+      const { storePath, entry, canonicalKey } = loadSessionEntry(sessionKey);
       const now = Date.now();
       const sessionId = entry?.sessionId ?? randomUUID();
       await touchSessionStore({ cfg, sessionKey, storePath, canonicalKey, entry, sessionId, now });
