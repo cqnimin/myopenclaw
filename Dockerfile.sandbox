@@ -1,13 +1,8 @@
-# syntax=docker/dockerfile:1.7
-
 FROM debian:bookworm-slim@sha256:98f4b71de414932439ac6ac690d7060df1f27161073c5036a7553723881bffbe
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN --mount=type=cache,id=openclaw-sandbox-bookworm-apt-cache,target=/var/cache/apt,sharing=locked \
-  --mount=type=cache,id=openclaw-sandbox-bookworm-apt-lists,target=/var/lib/apt,sharing=locked \
-  apt-get update \
-  && apt-get upgrade -y --no-install-recommends \
+RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     bash \
     ca-certificates \
@@ -15,10 +10,39 @@ RUN --mount=type=cache,id=openclaw-sandbox-bookworm-apt-cache,target=/var/cache/
     git \
     jq \
     python3 \
-    ripgrep
+    ripgrep \
+    unzip \
+    tar \
+    gzip \
+    bzip2 \
+  && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+  && apt-get install -y --no-install-recommends nodejs \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN mv /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list.d/debian.sources.bak \
+  && printf '%s\n' \
+    'deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm main contrib non-free non-free-firmware' \
+    'deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware' \
+    'deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bookworm-security main contrib non-free non-free-firmware' \
+    > /etc/apt/sources.list \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends python3-pip \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir --break-system-packages \
+    requests \
+    httpx \
+    google-genai \
+    pillow \
+    beautifulsoup4 \
+    python-dotenv \
+    pypdf \
+    weasyprint
 
 RUN useradd --create-home --shell /bin/bash sandbox
 USER sandbox
 WORKDIR /home/sandbox
+
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 CMD ["sleep", "infinity"]
