@@ -21,9 +21,9 @@ export function registerNodesAgentRoutingCommands(nodes: Command) {
             defaultRuntime.log(JSON.stringify(result, null, 2));
             return;
           }
-          const { success, muted } = getNodesTheme();
+          const { ok, muted } = getNodesTheme();
           if (agent) {
-            defaultRuntime.log(success(`Node ${nodeId} → agent "${agent}"`));
+            defaultRuntime.log(ok(`Node ${nodeId} → agent "${agent}"`));
           } else {
             defaultRuntime.log(muted(`Node ${nodeId} agent routing cleared.`));
           }

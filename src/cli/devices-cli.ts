@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { readConfigFileSnapshotForWrite, writeConfigFile } from "../config/io.js";
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
 import { isLoopbackHost } from "../gateway/net.js";
 import {
@@ -9,6 +10,7 @@ import {
   type PairedDevice as InfraPairedDevice,
 } from "../infra/device-pairing.js";
 import { formatTimeAgo } from "../infra/format-time/format-relative.ts";
+import { setNodeAgentId } from "../infra/node-agent-routing.js";
 import { defaultRuntime } from "../runtime.js";
 import {
   normalizeLowercaseStringOrEmpty,
@@ -189,6 +191,30 @@ function parseDevicePairingList(value: unknown): DevicePairingList {
     pending: Array.isArray(obj.pending) ? (obj.pending as PendingDevice[]) : [],
     paired: Array.isArray(obj.paired) ? (obj.paired as PairedDevice[]) : [],
   };
+}
+
+async function autoProvisionDeviceAgent(deviceId: string): Promise<string> {
+  const agentId = deviceId.slice(0, 8);
+  const { snapshot } = await readConfigFileSnapshotForWrite();
+  const cfg = snapshot.config;
+  const list = cfg.agents?.list ?? [];
+  if (!list.find((a: { id?: string }) => a.id === agentId)) {
+    const defaultWorkspace = cfg.agents?.defaults?.workspace;
+    const workspaceBase =
+      typeof defaultWorkspace === "string"
+        ? defaultWorkspace.replace(/[-_][^-_\\/]+$/, "")
+        : (defaultWorkspace ?? "");
+    const updatedCfg = {
+      ...cfg,
+      agents: {
+        ...cfg.agents,
+        list: [...list, { id: agentId, workspace: `${workspaceBase}-${agentId}` }],
+      },
+    };
+    await writeConfigFile(updatedCfg);
+  }
+  await setNodeAgentId(deviceId, agentId);
+  return agentId;
 }
 
 function selectLatestPendingRequest(pending: PendingDevice[] | undefined) {
@@ -419,14 +445,21 @@ export function registerDevicesCli(program: Command) {
           defaultRuntime.exit(1);
           return;
         }
+        const deviceId = (result as { device?: { deviceId?: string } })?.device?.deviceId;
         if (opts.json) {
           defaultRuntime.writeJson(result);
           return;
         }
-        const deviceId = (result as { device?: { deviceId?: string } })?.device?.deviceId;
+        let agentId: string | undefined;
+        if (deviceId) {
+          agentId = await autoProvisionDeviceAgent(deviceId);
+        }
         defaultRuntime.log(
           `${theme.success("Approved")} ${theme.command(deviceId ?? "ok")} ${theme.muted(`(${resolvedRequestId})`)}`,
         );
+        if (agentId) {
+          defaultRuntime.log(`  ${theme.muted(`agent: ${agentId}`)}`);
+        }
       }),
   );
 

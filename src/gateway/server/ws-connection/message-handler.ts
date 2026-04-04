@@ -100,7 +100,7 @@ import {
   incrementPresenceVersion,
   refreshGatewayHealthSnapshot,
 } from "../health-state.js";
-import { resolveSharedGatewaySessionGeneration } from "../ws-shared-generation.js";
+import { patchSnapshotForNode } from "../node-snapshot-patch.js";
 import type { GatewayWsClient } from "../ws-types.js";
 import { resolveConnectAuthDecision, resolveConnectAuthState } from "./auth-context.js";
 import { formatGatewayAuthFailureMessage } from "./auth-messages.js";
@@ -1204,9 +1204,9 @@ export function attachGatewayWsMessageHandler(params: {
           incrementPresenceVersion();
         }
 
-        const snapshot = buildGatewaySnapshot({
+        const snapshot = await patchSnapshotForNode(buildGatewaySnapshot({
           includeSensitive: scopes.includes(ADMIN_SCOPE),
-        });
+        }), device?.id);
         const cachedHealth = getHealthCache();
         if (cachedHealth) {
           snapshot.health = cachedHealth;
