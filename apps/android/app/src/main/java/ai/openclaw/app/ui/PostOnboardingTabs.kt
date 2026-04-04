@@ -44,20 +44,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import ai.openclaw.app.HomeDestination
+import ai.openclaw.app.R
 import ai.openclaw.app.MainViewModel
 
 private enum class HomeTab(
-  val label: String,
   val icon: ImageVector,
 ) {
-  Connect(label = "Connect", icon = Icons.Default.CheckCircle),
-  Chat(label = "Chat", icon = Icons.Default.ChatBubble),
-  Voice(label = "Voice", icon = Icons.Default.RecordVoiceOver),
-  Screen(label = "Screen", icon = Icons.AutoMirrored.Filled.ScreenShare),
-  Settings(label = "Settings", icon = Icons.Default.Settings),
+  Connect(icon = Icons.Default.CheckCircle),
+  Chat(icon = Icons.Default.ChatBubble),
+  Voice(icon = Icons.Default.RecordVoiceOver),
+  Screen(icon = Icons.AutoMirrored.Filled.ScreenShare),
+  Settings(icon = Icons.Default.Settings),
+}
+
+@Composable
+private fun HomeTab.localizedLabel(): String = when (this) {
+  HomeTab.Connect -> stringResource(R.string.tab_connect)
+  HomeTab.Chat -> stringResource(R.string.tab_chat)
+  HomeTab.Voice -> stringResource(R.string.tab_voice)
+  HomeTab.Screen -> stringResource(R.string.tab_screen)
+  HomeTab.Settings -> stringResource(R.string.tab_settings)
 }
 
 private enum class StatusVisual {
@@ -73,20 +82,6 @@ fun PostOnboardingTabs(viewModel: MainViewModel, modifier: Modifier = Modifier) 
   var activeTab by rememberSaveable { mutableStateOf(HomeTab.Connect) }
   var chatTabStarted by rememberSaveable { mutableStateOf(false) }
   var screenTabStarted by rememberSaveable { mutableStateOf(false) }
-  val requestedHomeDestination by viewModel.requestedHomeDestination.collectAsState()
-
-  LaunchedEffect(requestedHomeDestination) {
-    val destination = requestedHomeDestination ?: return@LaunchedEffect
-    activeTab =
-      when (destination) {
-        HomeDestination.Connect -> HomeTab.Connect
-        HomeDestination.Chat -> HomeTab.Chat
-        HomeDestination.Voice -> HomeTab.Voice
-        HomeDestination.Screen -> HomeTab.Screen
-        HomeDestination.Settings -> HomeTab.Settings
-      }
-    viewModel.clearRequestedHomeDestination()
-  }
 
   // Stop TTS when user navigates away from voice tab, and lazily keep the Chat/Screen tabs
   // alive after the first visit so repeated tab switches do not rebuild their UI trees.
@@ -277,7 +272,7 @@ private fun TopStatusBar(
             Box(modifier = Modifier.padding(4.dp))
           }
           Text(
-            text = statusText.trim().ifEmpty { "Offline" },
+            text = statusText.trim().ifEmpty { stringResource(R.string.offline) },
             style = mobileCaption1,
             color = chipText,
             maxLines = 1,
@@ -331,13 +326,14 @@ private fun BottomTabBar(
               horizontalAlignment = Alignment.CenterHorizontally,
               verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
+              val tabLabel = tab.localizedLabel()
               Icon(
                 imageVector = tab.icon,
-                contentDescription = tab.label,
+                contentDescription = tabLabel,
                 tint = if (active) mobileAccent else mobileTextTertiary,
               )
               Text(
-                text = tab.label,
+                text = tabLabel,
                 color = if (active) mobileAccent else mobileTextSecondary,
                 style = mobileCaption2.copy(fontWeight = if (active) FontWeight.Bold else FontWeight.Medium),
               )

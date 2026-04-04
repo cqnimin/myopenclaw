@@ -23,8 +23,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ai.openclaw.app.R
 import ai.openclaw.app.chat.ChatMessage
 import ai.openclaw.app.chat.ChatMessageContent
 import ai.openclaw.app.chat.ChatPendingToolCall
@@ -138,7 +140,7 @@ fun ChatTypingIndicatorBubble() {
       horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
       DotPulse(color = mobileTextSecondary)
-      Text("Thinking...", style = mobileCallout, color = mobileTextSecondary)
+      Text(stringResource(R.string.chat_thinking), style = mobileCallout, color = mobileTextSecondary)
     }
   }
 }
@@ -153,10 +155,10 @@ fun ChatPendingToolsBubble(toolCalls: List<ChatPendingToolCall>) {
 
   ChatBubbleContainer(
     style = bubbleStyle("assistant"),
-    roleLabel = "Tools",
+    roleLabel = stringResource(R.string.chat_tools_label),
   ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-      Text("Running tools...", style = mobileCaption1.copy(fontWeight = FontWeight.SemiBold), color = mobileTextSecondary)
+      Text(stringResource(R.string.chat_running_tools), style = mobileCaption1.copy(fontWeight = FontWeight.SemiBold), color = mobileTextSecondary)
       for (display in displays.take(6)) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
           Text(
@@ -177,7 +179,7 @@ fun ChatPendingToolsBubble(toolCalls: List<ChatPendingToolCall>) {
       }
       if (toolCalls.size > 6) {
         Text(
-          text = "... +${toolCalls.size - 6} more",
+          text = stringResource(R.string.chat_more_tools, toolCalls.size - 6),
           style = mobileCaption1,
           color = mobileTextSecondary,
         )
@@ -190,7 +192,7 @@ fun ChatPendingToolsBubble(toolCalls: List<ChatPendingToolCall>) {
 fun ChatStreamingAssistantBubble(text: String) {
   ChatBubbleContainer(
     style = bubbleStyle("assistant").copy(borderColor = mobileAccent),
-    roleLabel = "OpenClaw · Live",
+    roleLabel = stringResource(R.string.chat_live_label),
   ) {
     ChatMarkdown(text = text, textColor = mobileText)
   }
@@ -225,11 +227,12 @@ private fun bubbleStyle(role: String): ChatBubbleStyle {
   }
 }
 
+@Composable
 private fun roleLabel(role: String): String {
   return when (role) {
-    "user" -> "You"
-    "system" -> "System"
-    else -> "OpenClaw"
+    "user" -> stringResource(R.string.chat_role_you)
+    "system" -> stringResource(R.string.chat_role_system)
+    else -> stringResource(R.string.chat_role_openclaw)
   }
 }
 
@@ -253,7 +256,7 @@ private fun ChatBase64Image(base64: String, mimeType: String?) {
       )
     }
   } else if (imageState.failed) {
-    Text("Unsupported attachment", style = mobileCaption1, color = mobileTextSecondary)
+    Text(stringResource(R.string.chat_unsupported_attachment), style = mobileCaption1, color = mobileTextSecondary)
   }
 }
 

@@ -1,0 +1,286 @@
+<resources>
+    <string name="app_name">OpenClaw 节点</string>
+
+    <!-- Shared -->
+    <string name="trust_gateway_title">信任此网关？</string>
+    <string name="trust_gateway_body">首次 TLS 连接。\n\n信任前请核对此 SHA-256 指纹：\n%1$s</string>
+    <string name="trust_and_continue">信任并继续</string>
+    <string name="cancel">取消</string>
+    <string name="setup_code">设置码</string>
+    <string name="manual">手动</string>
+    <string name="use_tls">启用 TLS</string>
+    <string name="use_tls_subtitle">切换为安全 WebSocket（wss）。</string>
+    <string name="placeholder_token">令牌</string>
+    <string name="placeholder_password">密码</string>
+    <string name="quickfill_android_emulator">安卓模拟器</string>
+    <string name="quickfill_localhost">本地回环</string>
+    <string name="not_set">未设置</string>
+    <string name="granted">已授权</string>
+    <string name="not_granted">未授权</string>
+    <string name="manage">管理</string>
+    <string name="grant">授权</string>
+    <string name="enable_btn">开启</string>
+    <string name="offline">已离线</string>
+
+    <!-- ConnectTabScreen -->
+    <string name="connect_gateway_title">网关连接</string>
+    <string name="connect_gateway_active">网关已激活，准备就绪。</string>
+    <string name="connect_gateway_inactive">连接到网关以开始使用。</string>
+    <string name="connect_endpoint_label">端点</string>
+    <string name="connect_status_label">状态</string>
+    <string name="connect_disconnect_btn">断开连接</string>
+    <string name="connect_connect_btn">连接网关</string>
+    <string name="connect_validation_setup_code">请粘贴有效的设置码以连接。</string>
+    <string name="connect_validation_manual">请输入有效的主机和端口以连接。</string>
+    <string name="connect_advanced_title">高级设置</string>
+    <string name="connect_advanced_subtitle">设置码、端点、TLS、令牌、密码、引导。</string>
+    <string name="connect_advanced_collapse">收起高级设置</string>
+    <string name="connect_advanced_expand">展开高级设置</string>
+    <string name="connect_method_label">连接方式</string>
+    <string name="connect_run_on_host">在网关主机上运行：</string>
+    <string name="connect_placeholder_setup_code">粘贴设置码</string>
+    <string name="connect_host_label">主机</string>
+    <string name="connect_port_label">端口</string>
+    <string name="connect_token_optional">令牌（可选）</string>
+    <string name="connect_password_optional">密码（可选）</string>
+    <string name="connect_resolved_endpoint">解析端点</string>
+    <string name="connect_run_onboarding">重新运行引导</string>
+
+    <!-- PostOnboardingTabs -->
+    <string name="tab_connect">连接</string>
+    <string name="tab_chat">聊天</string>
+    <string name="tab_voice">语音</string>
+    <string name="tab_screen">屏幕</string>
+    <string name="tab_settings">设置</string>
+
+    <!-- SettingsSheet -->
+    <string name="settings_section_device">设备</string>
+    <string name="settings_name_label">名称</string>
+    <string name="settings_section_media">媒体</string>
+    <string name="settings_mic_title">麦克风</string>
+    <string name="settings_mic_desc">语音转录所需权限。</string>
+    <string name="settings_camera_title">摄像头</string>
+    <string name="settings_camera_desc">拍照和短视频（仅前台）。</string>
+    <string name="settings_section_notifications">通知</string>
+    <string name="settings_sys_notif_title">系统通知</string>
+    <string name="settings_sys_notif_desc">提醒和前台服务。</string>
+    <string name="settings_notif_listener_title">通知监听</string>
+    <string name="settings_notif_listener_desc">读取并响应通知。</string>
+    <string name="settings_sms_title">短信</string>
+    <string name="settings_sms_desc">从本设备发送短信。</string>
+    <string name="settings_section_data">数据访问</string>
+    <string name="settings_photos_title">照片</string>
+    <string name="settings_photos_desc">访问最近的照片。</string>
+    <string name="settings_contacts_title">联系人</string>
+    <string name="settings_contacts_desc">搜索并添加联系人。</string>
+    <string name="settings_calendar_title">日历</string>
+    <string name="settings_calendar_desc">读取和创建日程。</string>
+    <string name="settings_call_log_title">通话记录</string>
+    <string name="settings_call_log_desc">搜索最近通话记录。</string>
+    <string name="settings_motion_title">运动</string>
+    <string name="settings_motion_desc">跟踪步数和活动。</string>
+    <string name="settings_section_location">位置</string>
+    <string name="settings_location_off_title">关闭</string>
+    <string name="settings_location_off_desc">禁用位置共享。</string>
+    <string name="settings_location_using_title">使用期间</string>
+    <string name="settings_location_using_desc">仅在 OpenClaw 打开时。</string>
+    <string name="settings_location_precise_title">精确位置</string>
+    <string name="settings_location_precise_desc">可用时使用精确 GPS。</string>
+    <string name="settings_section_prefs">偏好设置</string>
+    <string name="settings_prevent_sleep_title">防止休眠</string>
+    <string name="settings_prevent_sleep_desc">打开时保持屏幕常亮。</string>
+    <string name="settings_debug_canvas_title">调试画布</string>
+    <string name="settings_debug_canvas_desc">在画布上显示状态叠层。</string>
+    <string name="settings_section_notif_forwarding">通知转发</string>
+    <string name="settings_notif_listener_access_title">通知监听权限</string>
+    <string name="settings_notif_listener_access_desc">「通知列表」、「通知操作」及通知转发事件所需权限。</string>
+    <string name="settings_forward_notif_title">转发通知事件</string>
+    <string name="settings_forward_notif_desc">将监听到的事件转发至网关节点。默认关闭，需手动开启。</string>
+    <string name="settings_notif_listener_off_warn">通知监听权限未开启，暂无法转发通知事件。</string>
+    <string name="settings_notif_forwarding_available">启用后即可使用转发功能。</string>
+    <string name="settings_notif_forwarding_disabled">需先在系统设置中开启「通知监听权限」，转发控制才可使用。</string>
+    <string name="settings_notif_filter_allowlist_title">包过滤：白名单</string>
+    <string name="settings_notif_filter_allowlist_desc">仅转发列出的应用通知。</string>
+    <string name="settings_notif_filter_blocklist_title">包过滤：黑名单</string>
+    <string name="settings_notif_filter_blocklist_desc">转发除列出外的所有应用通知。</string>
+    <string name="settings_notif_allowlist_none">未选择 — 白名单模式下不添加应用将不会转发任何通知。</string>
+    <string name="settings_notif_allowlist_count">已选择：允许 %1$d 个应用。</string>
+    <string name="settings_notif_blocklist_none">未选择 — 黑名单模式下将转发除 OpenClaw 外的所有应用通知。</string>
+    <string name="settings_notif_blocklist_count">已选择：屏蔽 %1$d 个应用。</string>
+    <string name="settings_notif_open_app_picker">打开应用选择器</string>
+    <string name="settings_notif_close_app_picker">关闭应用选择器</string>
+    <string name="settings_notif_search_apps">搜索应用</string>
+    <string name="settings_notif_show_system_apps_title">显示系统应用</string>
+    <string name="settings_notif_show_system_apps_desc">在结果中包含 Android 系统应用。</string>
+    <string name="settings_notif_quiet_hours_title">免打扰时段</string>
+    <string name="settings_notif_quiet_hours_desc">在指定时间段内暂停转发。</string>
+    <string name="settings_notif_quiet_start_label">开始时间 (HH:mm)</string>
+    <string name="settings_notif_quiet_end_label">结束时间 (HH:mm)</string>
+    <string name="settings_notif_quiet_time_hint">请使用 24 小时制 HH:mm 格式，例如 %1$s。</string>
+    <string name="settings_notif_save_quiet_hours">保存免打扰时段</string>
+    <string name="settings_notif_max_events_label">每分钟最大事件数</string>
+    <string name="settings_notif_save_rate">保存速率</string>
+    <string name="settings_notif_session_route_label">路由会话密钥（可选）</string>
+    <string name="settings_notif_session_route_desc">留空则使用本设备默认通知路由。仅在需要将通知转发到其他会话时设置。</string>
+    <string name="settings_notif_save_session_route">保存会话路由</string>
+
+    <!-- ChatComposer -->
+    <string name="chat_placeholder_message">输入消息…</string>
+    <string name="chat_gateway_offline">网关已离线，请先在「连接」标签页中连接。</string>
+    <string name="chat_thinking_select">选择思考级别</string>
+    <string name="chat_attach">附件</string>
+    <string name="chat_refresh">刷新</string>
+    <string name="chat_abort">中止</string>
+    <string name="chat_send">发送</string>
+    <string name="thinking_off">关闭</string>
+    <string name="thinking_low">低</string>
+    <string name="thinking_medium">中</string>
+    <string name="thinking_high">高</string>
+
+    <!-- ChatMessageViews -->
+    <string name="chat_thinking">思考中...</string>
+    <string name="chat_tools_label">工具</string>
+    <string name="chat_running_tools">运行工具中...</string>
+    <string name="chat_more_tools">… 还有 %1$d 个</string>
+    <string name="chat_live_label">OpenClaw · 直播</string>
+    <string name="chat_role_you">你</string>
+    <string name="chat_role_system">系统</string>
+    <string name="chat_role_openclaw">OpenClaw</string>
+    <string name="chat_unsupported_attachment">不支持的附件</string>
+
+    <!-- ChatSheetContent -->
+    <string name="chat_error_label">聊天错误</string>
+
+    <!-- ChatMessageListCard -->
+    <string name="chat_no_messages">暂无消息</string>
+    <string name="chat_first_prompt">发送第一条消息以开始会话。</string>
+    <string name="chat_connect_first">请先连接网关，再返回聊天。</string>
+
+    <!-- VoiceTabScreen -->
+    <string name="voice_tap_mic">点击麦克风开始</string>
+    <string name="voice_tap_mic_hint">每次停顿会自动发送一轮。</string>
+    <string name="voice_mute_speaker">静音扬声器</string>
+    <string name="voice_unmute_speaker">取消静音</string>
+    <string name="voice_mic_off_cd">关闭麦克风</string>
+    <string name="voice_mic_on_cd">打开麦克风</string>
+    <string name="voice_speaker_on">扬声器</string>
+    <string name="voice_speaker_muted">已静音</string>
+    <string name="voice_state_queued">%1$d 条排队中</string>
+    <string name="voice_state_sending">发送中</string>
+    <string name="voice_state_cooldown">冷却中</string>
+    <string name="voice_state_listening">聆听中</string>
+    <string name="voice_state_mic_off">麦克风已关</string>
+    <string name="voice_mic_rationale">语音模式需要麦克风权限。</string>
+    <string name="voice_mic_blocked">麦克风已被阻止，请在应用设置中启用。</string>
+    <string name="voice_open_settings">打开设置</string>
+    <string name="voice_role_you">你</string>
+    <string name="voice_role_openclaw">OpenClaw</string>
+    <string name="voice_listening_response">收听响应中…</string>
+    <string name="voice_thinking">OpenClaw 思考中…</string>
+
+    <!-- OnboardingFlow -->
+    <string name="onboarding_subtitle">移动端设置</string>
+    <string name="onboarding_back">返回</string>
+    <string name="onboarding_next">下一步</string>
+    <string name="onboarding_finish">完成</string>
+    <string name="onboarding_connect_btn">连接</string>
+    <string name="onboarding_step_welcome">欢迎</string>
+    <string name="onboarding_step_gateway">网关</string>
+    <string name="onboarding_step_permissions">权限</string>
+    <string name="onboarding_step_connect">连接</string>
+    <string name="onboarding_error_scan_first">请先扫描二维码，或使用高级设置。</string>
+    <string name="onboarding_error_invalid_setup_url">设置码包含无效的网关地址。</string>
+    <string name="onboarding_error_manual_invalid">手动端点无效。</string>
+    <string name="onboarding_error_invalid_gateway">无效的网关地址。</string>
+    <string name="onboarding_error_qr_invalid">二维码不包含有效的设置码。</string>
+    <string name="onboarding_error_qr_scanner">Google 代码扫描器无法启动，请更新 Google Play 服务或手动输入设置码。</string>
+    <string name="onboarding_method_qr">二维码 / 设置码</string>
+    <string name="onboarding_method_manual">手动</string>
+    <!-- Welcome step feature cards -->
+    <string name="onboarding_feature_connect_title">连接到您的网关</string>
+    <string name="onboarding_feature_connect_sub">扫描二维码或手动输入主机地址</string>
+    <string name="onboarding_feature_perms_title">选择您的权限</string>
+    <string name="onboarding_feature_perms_sub">仅开启所需权限，随时可更改</string>
+    <string name="onboarding_feature_chat_title">聊天、语音与屏幕</string>
+    <string name="onboarding_feature_chat_sub">从手机完全掌控操作端</string>
+    <string name="onboarding_feature_verify_title">验证您的连接</string>
+    <string name="onboarding_feature_verify_sub">进入应用前进行实时检查</string>
+    <!-- Gateway step -->
+    <string name="onboarding_gateway_title">网关连接</string>
+    <string name="onboarding_gateway_desc">在网关主机上运行 `openclaw qr`，然后用本设备扫码。</string>
+    <string name="onboarding_scan_qr">扫描二维码</string>
+    <string name="onboarding_qr_captured">已捕获二维码，请查看下方端点。</string>
+    <string name="onboarding_advanced_title">高级设置</string>
+    <string name="onboarding_advanced_subtitle">粘贴设置码或手动输入主机/端口。</string>
+    <string name="onboarding_advanced_collapse">收起高级设置</string>
+    <string name="onboarding_advanced_expand">展开高级设置</string>
+    <string name="onboarding_setup_code_label">设置码</string>
+    <string name="onboarding_placeholder_setup_code">粘贴 `openclaw qr --setup-code-only` 输出的代码</string>
+    <string name="onboarding_host_label">主机</string>
+    <string name="onboarding_port_label">端口</string>
+    <string name="onboarding_token_label">令牌（可选）</string>
+    <string name="onboarding_password_label">密码（可选）</string>
+    <string name="onboarding_resolved_endpoint">已解析端点</string>
+    <!-- Permissions step -->
+    <string name="onboarding_perms_title">权限</string>
+    <string name="onboarding_perms_desc">仅开启所需权限，随时可在设置中更改。</string>
+    <string name="onboarding_perm_section_system">系统</string>
+    <string name="onboarding_perm_section_media">媒体</string>
+    <string name="onboarding_perm_section_personal">个人数据</string>
+    <string name="onboarding_perm_discovery">网关发现</string>
+    <string name="onboarding_perm_discovery_desc">在局域网中查找网关</string>
+    <string name="onboarding_perm_location">位置</string>
+    <string name="onboarding_perm_location_desc">应用打开时共享设备位置</string>
+    <string name="onboarding_perm_notifications">通知</string>
+    <string name="onboarding_perm_notifications_desc">提醒和前台服务通知</string>
+    <string name="onboarding_perm_notif_listener">通知监听</string>
+    <string name="onboarding_perm_notif_listener_desc">读取并响应您的通知</string>
+    <string name="onboarding_perm_microphone">麦克风</string>
+    <string name="onboarding_perm_microphone_desc">在语音标签中进行语音转录</string>
+    <string name="onboarding_perm_camera">摄像头</string>
+    <string name="onboarding_perm_camera_desc">拍照和短视频</string>
+    <string name="onboarding_perm_photos">照片</string>
+    <string name="onboarding_perm_photos_desc">访问您最近的照片</string>
+    <string name="onboarding_perm_contacts">联系人</string>
+    <string name="onboarding_perm_contacts_desc">搜索并添加联系人</string>
+    <string name="onboarding_perm_calendar">日历</string>
+    <string name="onboarding_perm_calendar_desc">读取和创建日历事件</string>
+    <string name="onboarding_perm_motion">运动</string>
+    <string name="onboarding_perm_motion_desc">活动和步数跟踪</string>
+    <string name="onboarding_perm_motion_unavailable">此设备不支持</string>
+    <string name="onboarding_perm_sms">短信</string>
+    <string name="onboarding_perm_sms_desc">通过网关发送短信</string>
+    <string name="onboarding_perm_call_log">通话记录</string>
+    <string name="onboarding_perm_call_log_desc">搜索最近的通话记录</string>
+    <string name="onboarding_perms_footer">所有设置均可在设置中随时更改。</string>
+    <!-- Permission summary list items -->
+    <string name="perm_sum_gateway_discovery">网关发现</string>
+    <string name="perm_sum_location">位置</string>
+    <string name="perm_sum_notifications">通知</string>
+    <string name="perm_sum_notif_listener">通知监听</string>
+    <string name="perm_sum_microphone">麦克风</string>
+    <string name="perm_sum_camera">摄像头</string>
+    <string name="perm_sum_photos">照片</string>
+    <string name="perm_sum_contacts">联系人</string>
+    <string name="perm_sum_calendar">日历</string>
+    <string name="perm_sum_motion">运动</string>
+    <string name="perm_sum_sms">短信</string>
+    <string name="perm_sum_call_log">通话记录</string>
+    <string name="perm_sum_none">未选择</string>
+    <!-- Final step -->
+    <string name="onboarding_final_title">确认</string>
+    <string name="onboarding_final_method_label">连接方式</string>
+    <string name="onboarding_final_gateway_label">网关</string>
+    <string name="onboarding_final_perms_label">权限</string>
+    <string name="onboarding_final_invalid_gateway">无效的网关地址</string>
+    <string name="onboarding_final_tap_connect">点击「连接」以验证网关是否可达。</string>
+    <string name="onboarding_final_connected">已连接</string>
+    <string name="onboarding_final_pairing_required">需要配对</string>
+    <string name="onboarding_final_run_on_host">在网关主机上运行：</string>
+    <string name="onboarding_final_tap_again">然后再次点击「连接」。</string>
+    <string name="onboarding_final_connection_failed">连接失败</string>
+    <string name="onboarding_final_diag_error_label">错误</string>
+    <string name="onboarding_final_copy_report">复制报告给 Claw</string>
+    <string name="connect_diag_last_error">最近网关错误</string>
+    <string name="connect_diag_copy_report">复制报告给 Claw</string>
+</resources>

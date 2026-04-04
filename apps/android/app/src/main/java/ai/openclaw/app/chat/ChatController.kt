@@ -316,6 +316,11 @@ class ChatController(
           put("includeGlobal", JsonPrimitive(true))
           put("includeUnknown", JsonPrimitive(false))
           if (limit != null && limit > 0) put("limit", JsonPrimitive(limit))
+          val key = _sessionKey.value
+          if (key.startsWith("agent:")) {
+            val agentId = key.split(":").getOrNull(1)
+            if (!agentId.isNullOrEmpty()) put("agentId", JsonPrimitive(agentId))
+          }
         }
       val res = session.request("sessions.list", params.toString())
       _sessions.value = parseSessions(res)

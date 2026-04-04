@@ -91,38 +91,6 @@
     <string name="settings_prevent_sleep_desc">Keep screen awake while open.</string>
     <string name="settings_debug_canvas_title">Debug Canvas</string>
     <string name="settings_debug_canvas_desc">Show status overlay on canvas.</string>
-    <string name="settings_section_notif_forwarding">NOTIFICATION FORWARDING</string>
-    <string name="settings_notif_listener_access_title">Notification Listener Access</string>
-    <string name="settings_notif_listener_access_desc">Required for `notifications.list`, `notifications.actions`, and forwarded notification events.</string>
-    <string name="settings_forward_notif_title">Forward Notification Events</string>
-    <string name="settings_forward_notif_desc">Forward listener events into gateway node events. Off by default until you enable it.</string>
-    <string name="settings_notif_listener_off_warn">Notification listener access is off, so no notification events can be forwarded yet.</string>
-    <string name="settings_notif_forwarding_available">Forwarding is available when enabled below.</string>
-    <string name="settings_notif_forwarding_disabled">Forwarding controls stay disabled until Notification Listener Access is enabled in system Settings.</string>
-    <string name="settings_notif_filter_allowlist_title">Package Filter: Allowlist</string>
-    <string name="settings_notif_filter_allowlist_desc">Only listed package IDs are forwarded.</string>
-    <string name="settings_notif_filter_blocklist_title">Package Filter: Blocklist</string>
-    <string name="settings_notif_filter_blocklist_desc">All packages except listed IDs are forwarded.</string>
-    <string name="settings_notif_allowlist_none">Selected: none — allowlist mode forwards nothing until you add apps.</string>
-    <string name="settings_notif_allowlist_count">Selected: %1$d app(s) allowed.</string>
-    <string name="settings_notif_blocklist_none">Selected: none — blocklist mode forwards all apps except OpenClaw.</string>
-    <string name="settings_notif_blocklist_count">Selected: %1$d app(s) blocked.</string>
-    <string name="settings_notif_open_app_picker">Open App Picker</string>
-    <string name="settings_notif_close_app_picker">Close App Picker</string>
-    <string name="settings_notif_search_apps">Search apps</string>
-    <string name="settings_notif_show_system_apps_title">Show System Apps</string>
-    <string name="settings_notif_show_system_apps_desc">Include Android/system packages in results.</string>
-    <string name="settings_notif_quiet_hours_title">Quiet Hours</string>
-    <string name="settings_notif_quiet_hours_desc">Suppress forwarding during a local time window.</string>
-    <string name="settings_notif_quiet_start_label">Quiet Start (HH:mm)</string>
-    <string name="settings_notif_quiet_end_label">Quiet End (HH:mm)</string>
-    <string name="settings_notif_quiet_time_hint">Use 24-hour HH:mm format, for example %1$s.</string>
-    <string name="settings_notif_save_quiet_hours">Save Quiet Hours</string>
-    <string name="settings_notif_max_events_label">Max Events / Minute</string>
-    <string name="settings_notif_save_rate">Save Rate</string>
-    <string name="settings_notif_session_route_label">Route Session Key (optional)</string>
-    <string name="settings_notif_session_route_desc">Blank keeps notification events on this device\'s default notification route. Set a key only to pin forwarding into a different session.</string>
-    <string name="settings_notif_save_session_route">Save Session Route</string>
 
     <!-- ChatComposer -->
     <string name="chat_placeholder_message">Type a message…</string>
@@ -278,9 +246,4 @@
     <string name="onboarding_final_pairing_required">Pairing Required</string>
     <string name="onboarding_final_run_on_host">Run these on your gateway host:</string>
     <string name="onboarding_final_tap_again">Then tap Connect again.</string>
-    <string name="onboarding_final_connection_failed">Connection Failed</string>
-    <string name="onboarding_final_diag_error_label">Error</string>
-    <string name="onboarding_final_copy_report">Copy Report for Claw</string>
-    <string name="connect_diag_last_error">Last gateway error</string>
-    <string name="connect_diag_copy_report">Copy Report for Claw</string>
 </resources>

@@ -59,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -68,6 +69,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import ai.openclaw.app.R
 import ai.openclaw.app.MainViewModel
 import ai.openclaw.app.voice.VoiceConversationEntry
 import ai.openclaw.app.voice.VoiceConversationRole
@@ -161,12 +163,12 @@ fun VoiceTabScreen(viewModel: MainViewModel) {
                 tint = mobileTextTertiary,
               )
               Text(
-                "Tap the mic to start",
+                stringResource(R.string.voice_tap_mic),
                 style = mobileHeadline,
                 color = mobileTextSecondary,
               )
               Text(
-                "Each pause sends a turn automatically.",
+                stringResource(R.string.voice_tap_mic_hint),
                 style = mobileCallout,
                 color = mobileTextTertiary,
               )
@@ -225,13 +227,13 @@ fun VoiceTabScreen(viewModel: MainViewModel) {
           ) {
             Icon(
               imageVector = if (speakerEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
-              contentDescription = if (speakerEnabled) "Mute speaker" else "Unmute speaker",
+              contentDescription = if (speakerEnabled) stringResource(R.string.voice_mute_speaker) else stringResource(R.string.voice_unmute_speaker),
               modifier = Modifier.size(22.dp),
               tint = if (speakerEnabled) mobileTextSecondary else mobileDanger,
             )
           }
           Text(
-            if (speakerEnabled) "Speaker" else "Muted",
+            if (speakerEnabled) stringResource(R.string.voice_speaker_on) else stringResource(R.string.voice_speaker_muted),
             style = mobileCaption2,
             color = if (speakerEnabled) mobileTextTertiary else mobileDanger,
           )
@@ -281,7 +283,7 @@ fun VoiceTabScreen(viewModel: MainViewModel) {
           ) {
             Icon(
               imageVector = if (micEnabled) Icons.Default.MicOff else Icons.Default.Mic,
-              contentDescription = if (micEnabled) "Turn microphone off" else "Turn microphone on",
+              contentDescription = if (micEnabled) stringResource(R.string.voice_mic_off_cd) else stringResource(R.string.voice_mic_on_cd),
               modifier = Modifier.size(24.dp),
             )
           }
@@ -299,11 +301,11 @@ fun VoiceTabScreen(viewModel: MainViewModel) {
       val queueCount = micQueuedMessages.size
       val stateText =
         when {
-          queueCount > 0 -> "$queueCount queued"
-          micIsSending -> "Sending"
-          micCooldown -> "Cooldown"
-          micEnabled -> "Listening"
-          else -> "Mic off"
+          queueCount > 0 -> stringResource(R.string.voice_state_queued, queueCount)
+          micIsSending -> stringResource(R.string.voice_state_sending)
+          micCooldown -> stringResource(R.string.voice_state_cooldown)
+          micEnabled -> stringResource(R.string.voice_state_listening)
+          else -> stringResource(R.string.voice_state_mic_off)
         }
       val stateColor =
         when {
@@ -333,9 +335,9 @@ fun VoiceTabScreen(viewModel: MainViewModel) {
           }
         Text(
           if (showRationale) {
-            "Microphone permission is required for voice mode."
+            stringResource(R.string.voice_mic_rationale)
           } else {
-            "Microphone blocked. Open app settings to enable it."
+            stringResource(R.string.voice_mic_blocked)
           },
           style = mobileCaption1,
           color = mobileWarning,
@@ -346,7 +348,7 @@ fun VoiceTabScreen(viewModel: MainViewModel) {
           shape = RoundedCornerShape(12.dp),
           colors = ButtonDefaults.buttonColors(containerColor = mobileSurfaceStrong, contentColor = mobileText),
         ) {
-          Text("Open settings", style = mobileCallout.copy(fontWeight = FontWeight.SemiBold))
+          Text(stringResource(R.string.voice_open_settings), style = mobileCallout.copy(fontWeight = FontWeight.SemiBold))
         }
       }
     }
@@ -371,12 +373,12 @@ private fun VoiceTurnBubble(entry: VoiceConversationEntry) {
         verticalArrangement = Arrangement.spacedBy(3.dp),
       ) {
         Text(
-          if (isUser) "You" else "OpenClaw",
+          if (isUser) stringResource(R.string.voice_role_you) else stringResource(R.string.voice_role_openclaw),
           style = mobileCaption2.copy(fontWeight = FontWeight.SemiBold, letterSpacing = 0.6.sp),
           color = if (isUser) mobileAccent else mobileTextSecondary,
         )
         Text(
-          if (entry.isStreaming && entry.text.isBlank()) "Listening response…" else entry.text,
+          if (entry.isStreaming && entry.text.isBlank()) stringResource(R.string.voice_listening_response) else entry.text,
           style = mobileCallout,
           color = mobileText,
         )
@@ -400,7 +402,7 @@ private fun VoiceThinkingBubble() {
         verticalAlignment = Alignment.CenterVertically,
       ) {
         ThinkingDots(color = mobileTextSecondary)
-        Text("OpenClaw is thinking…", style = mobileCallout, color = mobileTextSecondary)
+        Text(stringResource(R.string.voice_thinking), style = mobileCallout, color = mobileTextSecondary)
       }
     }
   }
