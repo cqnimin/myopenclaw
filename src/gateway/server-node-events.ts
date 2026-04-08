@@ -2,6 +2,10 @@ import { randomUUID } from "node:crypto";
 import { formatErrorMessage } from "../infra/errors.js";
 import { getNodeAgentId } from "../infra/node-agent-routing.js";
 import type { PromptImageOrderEntry } from "../media/prompt-image-order.js";
+import {
+  normalizeLowercaseStringOrEmpty,
+  normalizeOptionalString,
+} from "../shared/string-coerce.js";
 import type { NodeEvent, NodeEventContext } from "./server-node-events-types.js";
 import {
   agentCommandFromIngress,

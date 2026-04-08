@@ -101,6 +101,7 @@ import {
   refreshGatewayHealthSnapshot,
 } from "../health-state.js";
 import { patchSnapshotForNode } from "../node-snapshot-patch.js";
+import { resolveSharedGatewaySessionGeneration } from "../ws-shared-generation.js";
 import type { GatewayWsClient } from "../ws-types.js";
 import { resolveConnectAuthDecision, resolveConnectAuthState } from "./auth-context.js";
 import { formatGatewayAuthFailureMessage } from "./auth-messages.js";
