@@ -40,7 +40,6 @@ import {
   type DeviceBootstrapProfile,
 } from "../../../shared/device-bootstrap-profile.js";
 import { roleScopesAllow } from "../../../shared/operator-scope-compat.js";
-import { normalizeOptionalString } from "../../../shared/string-coerce.js";
 import {
   isBrowserOperatorUiClient,
   isGatewayCliClient,
@@ -49,7 +48,8 @@ import {
 } from "../../../utils/message-channel.js";
 import { resolveRuntimeServiceVersion } from "../../../version.js";
 import type { AuthRateLimiter } from "../../auth-rate-limit.js";
-import type { GatewayAuthResult, ResolvedGatewayAuth } from "../../auth.js";
+import type { ResolvedGatewayAuth } from "../../auth.js";
+import type { GatewayAuthResult } from "../../auth.js";
 import { isLocalDirectRequest } from "../../auth.js";
 import {
   buildCanvasScopedHostUrl,
@@ -174,7 +174,7 @@ export function attachGatewayWsMessageHandler(params: {
   canvasHostUrl?: string;
   connectNonce: string;
   getResolvedAuth: () => ResolvedGatewayAuth;
-  getRequiredSharedGatewaySessionGeneration: () => string | undefined;
+  getRequiredSharedGatewaySessionGeneration?: () => string | undefined;
   /** Optional rate limiter for auth brute-force protection. */
   rateLimiter?: AuthRateLimiter;
   /** Browser-origin fallback limiter (loopback is never exempt). */
@@ -268,7 +268,6 @@ export function attachGatewayWsMessageHandler(params: {
   const hasUntrustedProxyHeaders = hasProxyHeaders && !remoteIsTrustedProxy;
   const hostIsLocalish = isLocalishHost(requestHost);
   const isLocalClient = isLocalDirectRequest(upgradeReq, trustedProxies, allowRealIpFallback);
-
   const reportedClientIp =
     isLocalClient || hasUntrustedProxyHeaders
       ? undefined
@@ -393,6 +392,7 @@ export function attachGatewayWsMessageHandler(params: {
 
         const frame = parsed;
         const connectParams = frame.params as ConnectParams;
+        const resolvedAuth = getResolvedAuth();
         const clientLabel = connectParams.client.displayName ?? connectParams.client.id;
         const clientMeta = {
           client: connectParams.client.id,
@@ -459,7 +459,6 @@ export function attachGatewayWsMessageHandler(params: {
         const isControlUi = isOperatorUiClient(connectParams.client);
         const isBrowserOperatorUi = isBrowserOperatorUiClient(connectParams.client);
         const isWebchat = isWebchatConnect(connectParams);
-        const resolvedAuth = getResolvedAuth();
         if (enforceOriginCheckForAnyClient || isBrowserOperatorUi || isWebchat) {
           const hostHeaderOriginFallbackEnabled =
             configSnapshot.gateway?.controlUi?.dangerouslyAllowHostHeaderOriginFallback === true;
@@ -682,7 +681,7 @@ export function attachGatewayWsMessageHandler(params: {
             rejectDeviceAuthInvalid("device-signature-stale", "device signature expired");
             return;
           }
-          const providedNonce = normalizeOptionalString(device.nonce) ?? "";
+          const providedNonce = typeof device.nonce === "string" ? device.nonce.trim() : "";
           if (!providedNonce) {
             rejectDeviceAuthInvalid("device-nonce-missing", "device nonce required");
             return;
@@ -745,14 +744,15 @@ export function attachGatewayWsMessageHandler(params: {
           rejectUnauthorized(authResult);
           return;
         }
-        const sharedGatewaySessionGeneration =
-          authMethod === "token" || authMethod === "password"
-            ? resolveSharedGatewaySessionGeneration(resolvedAuth)
-            : undefined;
         if (authMethod === "token" || authMethod === "password") {
+          const sharedGatewaySessionGeneration =
+            resolveSharedGatewaySessionGeneration(resolvedAuth);
           const requiredSharedGatewaySessionGeneration =
-            getRequiredSharedGatewaySessionGeneration();
-          if (sharedGatewaySessionGeneration !== requiredSharedGatewaySessionGeneration) {
+            getRequiredSharedGatewaySessionGeneration?.();
+          if (
+            requiredSharedGatewaySessionGeneration !== undefined &&
+            sharedGatewaySessionGeneration !== requiredSharedGatewaySessionGeneration
+          ) {
             setCloseCause("gateway-auth-rotated", {
               authGenerationStale: true,
             });
@@ -892,9 +892,6 @@ export function attachGatewayWsMessageHandler(params: {
               isWebchat,
               reason,
             });
-            // QR bootstrap onboarding stays single-use, but the first node bootstrap handshake
-            // should seed bounded device tokens and only consume the bootstrap token once the
-            // hello-ok path succeeds so reconnects can recover from pre-hello failures.
             const allowSilentBootstrapPairing =
               authMethod === "bootstrap-token" &&
               reason === "not-paired" &&
@@ -1014,10 +1011,6 @@ export function attachGatewayWsMessageHandler(params: {
           const isPaired = paired?.publicKey === devicePublicKey;
           if (!isPaired) {
             if (!(skipLocalBackendSelfPairing || skipControlUiPairingForDevice)) {
-              // Initial local backend/control-ui self-pairing can bypass the
-              // pairing prompt, but only while the device is still unpaired.
-              // Once a device is paired, reconnects must stay inside the
-              // approved role/scope baseline below.
               const ok = await requirePairing("not-paired", paired);
               if (!ok) {
                 return;
@@ -1213,10 +1206,13 @@ export function attachGatewayWsMessageHandler(params: {
           snapshot.health = cachedHealth;
           snapshot.stateVersion.health = getHealthVersion();
         }
-        const canvasCapability =
-          role === "node" && canvasHostUrl ? mintCanvasCapabilityToken() : undefined;
+        const canvasCapability = canvasHostUrl ? mintCanvasCapabilityToken() : undefined;
         const canvasCapabilityExpiresAtMs = canvasCapability
           ? Date.now() + CANVAS_CAPABILITY_TTL_MS
+          : undefined;
+        const usesSharedGatewayAuth = authMethod === "token" || authMethod === "password";
+        const sharedGatewaySessionGeneration = usesSharedGatewayAuth
+          ? resolveSharedGatewaySessionGeneration(resolvedAuth)
           : undefined;
         const scopedCanvasHostUrl =
           canvasHostUrl && canvasCapability
@@ -1255,7 +1251,7 @@ export function attachGatewayWsMessageHandler(params: {
           socket,
           connect: connectParams,
           connId,
-          usesSharedGatewayAuth: authMethod === "token" || authMethod === "password",
+          usesSharedGatewayAuth,
           sharedGatewaySessionGeneration,
           presenceKey,
           clientIp: reportedClientIp,
@@ -1272,7 +1268,7 @@ export function attachGatewayWsMessageHandler(params: {
             remoteIp: reportedClientIp,
           });
           const instanceIdRaw = connectParams.client.instanceId;
-          const instanceId = normalizeOptionalString(instanceIdRaw) ?? "";
+          const instanceId = typeof instanceIdRaw === "string" ? instanceIdRaw.trim() : "";
           const nodeIdsForPairing = new Set<string>([nodeSession.nodeId]);
           if (instanceId) {
             nodeIdsForPairing.add(instanceId);
@@ -1370,17 +1366,6 @@ export function attachGatewayWsMessageHandler(params: {
         return;
       }
 
-      if (client.usesSharedGatewayAuth) {
-        const requiredSharedGatewaySessionGeneration = getRequiredSharedGatewaySessionGeneration();
-        if (client.sharedGatewaySessionGeneration !== requiredSharedGatewaySessionGeneration) {
-          setCloseCause("gateway-auth-rotated", {
-            authGenerationStale: true,
-          });
-          close(4001, "gateway auth changed");
-          return;
-        }
-      }
-
       // After handshake, accept only req frames
       if (!validateRequestFrame(parsed)) {
         send({
@@ -1396,6 +1381,21 @@ export function attachGatewayWsMessageHandler(params: {
       }
       const req = parsed;
       logWs("in", "req", { connId, id: req.id, method: req.method });
+      if (client.usesSharedGatewayAuth) {
+        const requiredSharedGatewaySessionGeneration =
+          getRequiredSharedGatewaySessionGeneration?.();
+        if (
+          requiredSharedGatewaySessionGeneration !== undefined &&
+          client.sharedGatewaySessionGeneration !== requiredSharedGatewaySessionGeneration
+        ) {
+          setCloseCause("gateway-auth-rotated", {
+            authGenerationStale: true,
+            method: req.method,
+          });
+          close(4001, "gateway auth changed");
+          return;
+        }
+      }
       const respond = (
         ok: boolean,
         payload?: unknown,

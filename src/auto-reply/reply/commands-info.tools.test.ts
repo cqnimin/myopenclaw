@@ -1,5 +1,5 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { EffectiveToolInventoryResult } from "../../agents/tools-effective-inventory.js";
+import type { EffectiveToolInventoryResult } from "../../agents/tools-effective-inventory.types.js";
 import type { OpenClawConfig } from "../../config/config.js";
 import { setActivePluginRegistry } from "../../plugins/runtime.js";
 import {
@@ -208,6 +208,48 @@ describe("handleToolsCommand", () => {
     await handleToolsCommand(params, true);
 
     expect(resolveToolsMock).toHaveBeenCalledWith(expect.objectContaining({ groupId: undefined }));
+  });
+
+  it("prefers the target session entry for tool inventory group metadata", async () => {
+    const { buildCommandTestParams, handleToolsCommand, resolveToolsMock } =
+      await loadToolsHarness();
+    const params = buildCommandTestParams("/tools", buildConfig(), undefined, {
+      workspaceDir: "/tmp",
+    });
+    params.sessionEntry = {
+      sessionId: "wrapper-session",
+      updatedAt: Date.now(),
+      groupId: "wrapper-group",
+      groupChannel: "#wrapper",
+      space: "wrapper-space",
+    };
+    params.sessionStore = {
+      [params.sessionKey]: {
+        sessionId: "target-session",
+        updatedAt: Date.now(),
+        groupId: "target-group",
+        groupChannel: "#target",
+        space: "target-space",
+      },
+    };
+    params.ctx = {
+      ...params.ctx,
+      From: "telegram:group:abc123",
+      Provider: "telegram",
+      Surface: "telegram",
+      GroupChannel: "#ctx",
+      GroupSpace: "ctx-space",
+    };
+
+    await handleToolsCommand(params, true);
+
+    expect(resolveToolsMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        groupId: "target-group",
+        groupChannel: "#target",
+        groupSpace: "target-space",
+      }),
+    );
   });
 
   it("renders the detailed tool list in verbose mode", async () => {

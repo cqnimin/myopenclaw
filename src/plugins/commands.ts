@@ -6,7 +6,7 @@
  */
 
 import { resolveConversationBindingContext } from "../channels/conversation-binding-context.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { logVerbose } from "../globals.js";
 import { normalizeLowercaseStringOrEmpty } from "../shared/string-coerce.js";
 import {
@@ -69,11 +69,23 @@ export function matchPluginCommand(
   const args = spaceIndex === -1 ? undefined : trimmed.slice(spaceIndex + 1).trim();
 
   const key = normalizeLowercaseStringOrEmpty(commandName);
+  const alternateKeys = [key];
+  if (key.includes("_")) {
+    alternateKeys.push(key.replace(/_/g, "-"));
+  }
+  if (key.includes("-")) {
+    alternateKeys.push(key.replace(/-/g, "_"));
+  }
   const command =
-    pluginCommands.get(key) ??
-    Array.from(pluginCommands.values()).find((candidate) =>
-      listPluginInvocationNames(candidate).includes(key),
-    );
+    alternateKeys
+      .map(
+        (candidateKey) =>
+          pluginCommands.get(candidateKey) ??
+          Array.from(pluginCommands.values()).find((candidate) =>
+            listPluginInvocationNames(candidate).includes(candidateKey),
+          ),
+      )
+      .find(Boolean) ?? null;
 
   if (!command) {
     return null;

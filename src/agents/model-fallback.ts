@@ -1,14 +1,18 @@
-import type { OpenClawConfig } from "../config/config.js";
 import {
   resolveAgentModelFallbackValues,
   resolveAgentModelPrimaryValue,
 } from "../config/model-input.js";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { normalizeOptionalString } from "../shared/string-coerce.js";
 import { sanitizeForLog } from "../terminal/ansi.js";
 import { resolveAuthProfileOrder } from "./auth-profiles/order.js";
-import { ensureAuthProfileStore, loadAuthProfileStoreForRuntime } from "./auth-profiles/store.js";
+import {
+  ensureAuthProfileStore,
+  hasAnyAuthProfileStoreSource,
+  loadAuthProfileStoreForRuntime,
+} from "./auth-profiles/store.js";
 import {
   getSoonestCooldownExpiry,
   isProfileInCooldown,
@@ -640,9 +644,10 @@ export async function runWithModelFallback<T>(params: {
     model: params.model,
     fallbacksOverride: params.fallbacksOverride,
   });
-  const authStore = params.cfg
-    ? ensureAuthProfileStore(params.agentDir, { allowKeychainPrompt: false })
-    : null;
+  const authStore =
+    params.cfg && hasAnyAuthProfileStoreSource(params.agentDir)
+      ? ensureAuthProfileStore(params.agentDir, { allowKeychainPrompt: false })
+      : null;
   const attempts: FallbackAttempt[] = [];
   let lastError: unknown;
   const cooldownProbeUsedProviders = new Set<string>();

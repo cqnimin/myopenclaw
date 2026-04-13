@@ -1,15 +1,15 @@
 import type { SkillSnapshot } from "../../agents/skills.js";
 import type { ThinkLevel, VerboseLevel } from "../../auto-reply/thinking.js";
-import type { OpenClawConfig } from "../../config/config.js";
 import type { AgentDefaultsConfig } from "../../config/types.agent-defaults.js";
+import type { OpenClawConfig } from "../../config/types.openclaw.js";
 import type { CronJob } from "../types.js";
 import { resolveCronPayloadOutcome } from "./helpers.js";
 import {
   countActiveDescendantRuns,
-  listDescendantRunsForRequester,
-  LiveSessionModelSwitchError,
   getCliSessionId,
   isCliProvider,
+  listDescendantRunsForRequester,
+  LiveSessionModelSwitchError,
   logWarn,
   normalizeVerboseLevel,
   registerAgentRunContext,
@@ -67,10 +67,13 @@ export function createCronPromptExecutor(params: {
   abortSignal?: AbortSignal;
   abortReason: () => string;
 }) {
-  const sessionFile = resolveSessionTranscriptPath(
-    params.cronSession.sessionEntry.sessionId,
-    params.agentId,
-  );
+  const sessionFile =
+    params.cronSession.sessionEntry.sessionFile?.trim() ||
+    resolveSessionTranscriptPath(params.cronSession.sessionEntry.sessionId, params.agentId);
+  // Fallback for callers that bypass prepareCronRunContext before persisting retries.
+  if (!params.cronSession.sessionEntry.sessionFile?.trim()) {
+    params.cronSession.sessionEntry.sessionFile = sessionFile;
+  }
   const cronFallbacksOverride = resolveCronFallbacksOverride({
     cfg: params.cfg,
     job: params.job,
@@ -101,7 +104,7 @@ export function createCronPromptExecutor(params: {
         if (isCliProvider(providerOverride, params.cfgWithAgentDefaults)) {
           const cliSessionId = params.cronSession.isNewSession
             ? undefined
-            : getCliSessionId(params.cronSession.sessionEntry, providerOverride);
+            : await getCliSessionId(params.cronSession.sessionEntry, providerOverride);
           const result = await runCliAgent({
             sessionId: params.cronSession.sessionEntry.sessionId,
             sessionKey: params.agentSessionKey,

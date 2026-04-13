@@ -1,9 +1,9 @@
 import type { AgentMessage } from "@mariozechner/pi-agent-core";
+import { setReplyPayloadMetadata } from "../auto-reply/reply-payload.js";
 import { parseReplyDirectives } from "../auto-reply/reply/reply-directives.js";
 import { createStreamingDirectiveAccumulator } from "../auto-reply/reply/streaming-directives.js";
 import { isSilentReplyText, SILENT_REPLY_TOKEN } from "../auto-reply/tokens.js";
 import { formatToolAggregate } from "../auto-reply/tool-meta.js";
-import { setReplyPayloadMetadata } from "../auto-reply/types.js";
 import { emitAgentEvent } from "../infra/agent-events.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import type { InlineCodeState } from "../markdown/code-spans.js";
@@ -111,6 +111,7 @@ export function subscribeEmbeddedPiSession(params: SubscribeEmbeddedPiSessionPar
     unsubscribed: false,
     replayState: createEmbeddedRunReplayState(params.initialReplayState),
     livenessState: "working",
+    hadDeterministicSideEffect: false,
     messagingToolSentTexts: [],
     messagingToolSentTextsNormalized: [],
     messagingToolSentTargets: [],
@@ -678,6 +679,11 @@ export function subscribeEmbeddedPiSession(params: SubscribeEmbeddedPiSessionPar
   };
 
   const resetForCompactionRetry = () => {
+    state.hadDeterministicSideEffect =
+      state.hadDeterministicSideEffect === true ||
+      messagingToolSentTexts.length > 0 ||
+      messagingToolSentMediaUrls.length > 0 ||
+      state.successfulCronAdds > 0;
     assistantTexts.length = 0;
     toolMetas.length = 0;
     toolMetaById.clear();
